@@ -238,6 +238,7 @@ genop(int op, Node *s, Node *m, Node *d)
 	{
 		[Olt] = {[Tint]=ILTW,[Tbool]=ILTW},
 		[Oeq] = {[Tint]=IEQW,[Tbool]=IEQW},
+		[Oneq] = {[Tint]=INEQW,[Tbool]=INEQW},
 		[Oleq] ={[Tint]=ILEQW,[Tbool]=ILEQW},
 		[Oandand] = {[Tint]=IEQW,[Tbool]=IEQW},
 		[Ooror] = {[Tint]=IADDW,[Tbool]=IADDW},
@@ -273,25 +274,25 @@ addprint(FILE *f, int am, Addr *a)
 	case Anone:
 		return;	
 	case Afp:
-		fprintf(f, "%u(fp)", a->reg);
+		fprintf(f, "%d(fp)", a->reg);
 		break;
 	case Aimm:
-		fprintf(f, "$%u", a->offset);
+		fprintf(f, "$%d", a->offset);
 		break;
 	case Afpind:
-		fprintf(f, "%u(%u(fp))", a->offset, a->reg);
+		fprintf(f, "%d(%d(fp))", a->offset, a->reg);
 		break;
 	case Adesc:
-		fprintf(f, "$%u", a->offset+a->reg);
+		fprintf(f, "$%d", a->offset+a->reg);
 		break;	
 	case Apc:
-		fprintf(f, "$%u", a->reg+a->offset);
+		fprintf(f, "$%d", a->reg+a->offset);
 		break;
 	case Amp:
-		fprintf(f, "%u(mp)",a->reg);
+		fprintf(f, "%d(mp)",a->reg);
 		break;
 	case Aldt:
-		fprintf(f, "$%u", a->reg);	
+		fprintf(f, "$%d", a->reg);	
 		break;
 	default:
 		assert(0);

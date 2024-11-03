@@ -6,13 +6,12 @@ OBJS=$(SRCS:.c=.o)
 com: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ 
 	make -C ./vm
-	cp ./vm/run .
 
 $(OBJS): yo.h isa.h fn.h dat.h
 
 tests:
-	./com fib.yo
-	./run obj
+	./com ./test 
+	./vm/run obj
 
 clean:
 	rm -f com $(OBJS) obj exported run

@@ -61,7 +61,7 @@ struct REG
 	u8 *TS;
 	u8 *EX;
 	void *s, *d, *m;
-	int t, dt ,mt;
+	WORD t, dt ,mt;
 };
 
 struct Array

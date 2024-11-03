@@ -1,6 +1,6 @@
 #include "vm.h"
 
-static u8 end[1];
+static u8 end[1024];
 u32 ninst;
 Inst *inst;
 REG R;
@@ -47,10 +47,10 @@ rd2(FILE *f)
 	assert(fread(&v, 1, 2, f) == 2);
 	return v;
 }
-u32
+WORD
 rd4(FILE *f)
 {
-	u32 v = 0;
+	i32 v = 0;
 	assert(fread(&v, 1, 4, f) == 4);
 	return v;
 }
@@ -86,6 +86,7 @@ OP(bneqw) {if(W(s) != W(m)) JMP(d);}
 OP(ltw) {W(d) = (W(s) < W(m));}
 OP(leqw) {W(d) = (W(s) <= W(m));}
 OP(eqw) {W(d) = (W(s) == W(m));}
+OP(neqw) {W(d) = (W(s) != W(m));}
 OP(frame){
 	Stack *s;
 	Frame *f;
@@ -116,6 +117,7 @@ OP(ret) {
 	R.FP = f->fp;
 	if(R.FP == NULL){
 		printf("result %ld\n", W(d));
+		WORD *p = end;
 		exit(0);
 	}
 	R.SP = (u8*)f;
@@ -150,7 +152,8 @@ OP(slice){
 	if(s2 == -1)
 		s2 = a->len;
 	assert(s1 >= 0 && s1 < a->len);
-	assert(s2 >= 0 && s2 < a->len);
+	assert(s2 >= 0 && s2 <= a->len);
+	assert(s1 < s2);
 	Array d = *a;
 	d.len = s2 - s1;	
 	d.cap = s2 - s1;
@@ -175,6 +178,7 @@ static void (*optab[])(void) = {
 	[IBEQW] = beqw,
 	[IBNEQW] = bneqw,
 	[IEQW] = eqw,
+	[INEQW] = neqw,
 	[ILEQW] = leqw,
 	[ILTW] = ltw,
 };

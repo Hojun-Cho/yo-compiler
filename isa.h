@@ -32,6 +32,7 @@ enum
 	IMOVM,
 	ILTW,
 	IEQW,
+	INEQW,
 	ILEQW,
 	IBEQW,
 	IBNEQW,

@@ -397,14 +397,6 @@ rewrite(Node *n)
 		n->l->ty = tint;
 		n->l = rewrite(n->l);
 		return n;
-	case Oslice:
-		if(r->l == nil)
-			r->l = mkconst(0);
-		if(r->r == nil)
-			r->r = mkconst(n->ty->len);
-		n->l = rewrite(n->l);
-		n->r = rewrite(n->r);
-		break;
 	case Oindex:
 		t = n->ty;
 		n->r = mkn(Omul, mkconst(IBY2WD), n->r);
@@ -462,7 +454,7 @@ swaprelop(int op)
 	case Ogt: return Olt;
 	case Ogeq: return Oleq;
 	case Oleq: return Ogeq;
-	default: assert(0);
+	default: return op;
 	}	
 }
 
@@ -504,17 +496,13 @@ static Inst*
 brcom(Node *n, int ift, Inst *b)
 {
 	Inst *bb = nil;
-	int op = n->op;
 	Node nto={0};
-	Node f = (Node){.op=Oconst,.val=!ift,.addable=Rconst,.ty=tbool};
+	Node f = (Node){.op=Oconst,.addable=Rconst,.ty=tbool,.val=1};
 
-	sumark(n);
-	if(op != Oconst){
-		cmpcom(talloc(&nto, tbool, nil), n);
-		bb = genrawop(IBEQW, &nto, &f, nil);
-	}else{
-		bb = genrawop(IBEQW, &f, n, nil);	
-	}
+	if(ift)
+		f.val = 0;
+	ecom(talloc(&nto, tbool, nil), n);
+	bb = genrawop(IBEQW, &nto, &f, nil);
 	bb->branch = b;
 	tfree(&nto);
 	return bb;
@@ -668,6 +656,8 @@ scom(Node *n)
 		case Oif:
 			pushblock();
 			pushblock();
+			n->l = simplifiy(n->l);
+			sumark(n->l);
 			p = brcom(l, 1, nil);
 			tfreenow();
 			popblock();
@@ -760,5 +750,4 @@ fncom(Decl *d)
 	Decl *locs = concatdecl(d->locals, tdecls());
 	d->offset += idoffsets(locs, d->offset, IBY2WD);
 	d->locals = locs;
-	printf("%d\n", d->offset);
 }

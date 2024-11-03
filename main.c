@@ -102,4 +102,5 @@ main(int argc, char **argv)
 	genbin("obj");
 
 	asminst(stdout, firstinst);
+	asmexport(stdout, pkgname, fns, nfn);
 }

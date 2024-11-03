@@ -41,15 +41,15 @@ wr2(FILE *f, u16 v)
 	fwrite(&v, 1, 2, f);
 }
 void
-wr4(FILE *f, u32 v)
+wr4(FILE *f, i32 v)
 {
 	fwrite(&v, 1, 4, f);
 }
 
 void
-disaddr(FILE* f, u32 m, Addr *a)
+disaddr(FILE* f, i32 m, Addr *a)
 {
-	u32 val = 0;
+	i32 val = 0;
 	switch(m){
 	case Anone:
 		return;

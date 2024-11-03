@@ -246,8 +246,8 @@ index(Node *id)
 		assert(0);
 	case ':':
 		if(try((int[]){']',0}).kind)
-			return mkn(Oslice, id, mkn(Oseq, nil, nil));
-		n = mkn(Oslice, id, mkn(Oseq, nil, expr()));
+			return mkn(Oslice, id, mkn(Oseq, mkconst(0), mkconst(-1)));
+		n = mkn(Oslice, id, mkn(Oseq, mkconst(0), expr()));
 		break;
 	default:
 		l = expr();
@@ -257,7 +257,7 @@ index(Node *id)
 		}
 		want((int[]){':',0});
 		if(peek((int[]){']',0}).kind){
-			n = mkn(Oslice, id, mkn(Oseq, l, nil));
+			n = mkn(Oslice, id, mkn(Oseq, l, mkconst(-1)));
 			break;
 		}
 		r = expr();
@@ -293,10 +293,10 @@ unrayexpr(void)
 	switch(try((int[]){'+','-','*','/','&',0}).kind){
 	default: return primaryexprs();
 	case '+':
-	case '-':
 	case '!':
 	case '/':
 	case '^': assert(0);
+	case '-': return mkn(Omul, mkconst(-1), unrayexpr());
 	case '*': return mkn(Oxref, unrayexpr(), nil); 
 	case '&': return mkn(Oref,unrayexpr(), nil);
 	}
@@ -587,12 +587,11 @@ paramdecl(void)
 static Decl*
 paramlist(void)
 {
-	Decl h={0}, *p = &h;
-
-	p = p->next = paramdecl();
-	for(;try((int[]){',',0}).kind==',';)
-		p = p->next = paramdecl();
-	return h.next;
+	Decl *p = paramdecl();
+	for(;try((int[]){',',0}).kind==',';){
+		 p =concatdecl(p, paramdecl());
+	}
+	return p;
 }
 
 // "(" [parameterlist [ ',' ] ] ")"

@@ -21,6 +21,7 @@ char* instname[] = {
 	[ILTW] = "lt",
 	[ILEQW] = "leq",
 	[IEQW] = "eq",
+	[INEQW] = "neq",
 };
 
 void
@@ -33,18 +34,17 @@ asminst(FILE *f, Inst *in)
 void
 asmexport(FILE *f, Sym *pkg, Decl **arr, int n)
 {	
-	fprintf(f, "\tpackage\t");
+	fprintf(f, "\n\tpackage\t");
 	fprintf(f, "%s\n", pkg->name);
-	fprintf(f, "\texported %d\n", n);
+	fprintf(f, "\tfn %d\n", n);
 	for(int i = 0; i < n; ++i){
 		Decl *d = arr[i];
 		switch(d->store){
 		default:
 			break;
-		// case Dfn:
-		// 	fprintf(f, "\tlink\t%u,%u,\"",d->desc->id, d->pc->pc);
-		// 	fprintf(f, "%s\"\n", d->sym->name);
-		// 	break;
+		case Dfn:
+			fprintf(f, "\tfn\t%s,%d,\n",d->sym->name, d->pc->pc);
+			break;
 		}
 	}
 }

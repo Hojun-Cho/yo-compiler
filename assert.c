@@ -212,18 +212,16 @@ assertexpr(Node *n)
 		break;
 	case Oslice:
 		t = usetype(l->ty);
+		assert(t->kind == Tarray || t->kind == Tslice);
 		if(t->kind == Tslice)
-			t = typeofslice(t);
-		assert(t->kind == Tarray);
-		n->ty = mktype(Tslice, ArrHead, t, nil);
+			t = t->tof;
+		n->ty = mktype(Tslice, ArrHead, t->tof, nil);
 		break;
 	case Oindex:
 		t = l->ty;
-		if(t->kind == Tslice)
-			t = typeofslice(t->tof);
-		assert(t->kind == Tarray);
+		assert(t->kind == Tarray || t->kind == Tslice);
 		assertexpr(r);
-		if(r->op == Oconst)
+		if(r->op == Oconst && t->kind == Tarray)
 			assert(r->val < t->len);
 		n->ty = t->tof;
 		break;
@@ -280,16 +278,17 @@ assertstmt(Type *ret, Node *n)
 				assert(l->ty == tnone);
 			else
 				assert(eqtype(ret, l->ty));
+			n->ty = ret;
 			return top;
 		case Oif:
 			n->l = l = assertstmt(ret, l);
-			assert(l->ty == tbool);
+			assert(l->ty->kind == Tbool);
 			r->l = assertstmt(ret, r->l);
 			n = r;
 			break;
 		case Ofor:
 			assertexpr(l);
-			assert(l->ty == tbool);
+			assert(l->ty->kind == Tbool);
 			pushloop();
 			r->r = assertstmt(ret, r->r);
 			r->l = assertstmt(ret, r->l);

@@ -170,6 +170,18 @@ D91(void)
 	R.m = R.FP+R.PC->reg;
 }
 static void
+D92(void)
+{
+	R.s = (u8*)&R.PC->s.imm;
+	R.d = (u8*)&R.PC->d.imm;
+	R.m = R.FP+R.PC->reg;
+}
+static void
+D93(void)
+{
+	R.s = (u8*)&R.PC->s.imm;
+}
+static void
 D95(void)
 {
 	R.s = (u8*)&R.PC->s.imm;
@@ -216,6 +228,8 @@ void	(*dec[])(void) =
 	[0x8A] = D8A,
 	[0x8D] = D8D,
 	[0x91] = D91,
+	[0x92] = D92,
+	[0x93] = D93,
 	[0x95] = D95,
 	[0xA9] = DA9,
 	[0xAD] = DAD,

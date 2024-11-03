@@ -83,8 +83,8 @@ int sharelocal(Decl *d);
 /* dis.c */
 int disinst(FILE *out, Inst *in);
 void wr1(FILE *f, u8 v);
-void wr4(FILE *f, u32 v);
-void disaddr(FILE* f, u32 m, Addr *a);
+void wr4(FILE *f, i32 v);
+void disaddr(FILE* f, i32 m, Addr *a);
 
 /* gen.c */
 void genstart(void);

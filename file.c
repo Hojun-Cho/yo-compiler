@@ -34,7 +34,7 @@ getfiles(char *path, char *sufix)
 	int ll = strlen(path);
 	int j = 1;
 	s = new(sizeof(char*));
-	d = opendir(path);
+	assert(d = opendir(path));
 	while((p=readdir(d)) != NULL){
 		if(issufix(p->d_name, sufix)){
 			s = realloc(s, (j+1)*sizeof(void*));
@@ -42,7 +42,7 @@ getfiles(char *path, char *sufix)
 			char *n = new(l+ll+2);
 			memcpy(n, path, ll);
 			n[ll] = '/';
-			memcpy(n+ll, p->d_name, l+1);
+			memcpy(n+ll+1, p->d_name, l+1);
 			s[j-1] = n;
 			s[j++] = nil;
 		}
