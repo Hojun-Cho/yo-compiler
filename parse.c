@@ -614,7 +614,7 @@ arraytype(void)
 	Token t;
 
 	want((int[]){'[',0});
-	switch((t = try((int[]){Lid,Lconst,0})).kind){
+	switch((t = try((int[]){Lid,Lconst,']',0})).kind){
 	case Lid:
 		assert(t.sym->decl == _decl);
 		want((int[]){']',0});
@@ -626,6 +626,9 @@ arraytype(void)
 		want((int[]){']',0});
 		ty = mktype(Tarray, 0, type(), nil);
 		assert((ty->len = t.num) > 0);
+		return ty;
+	case ']':
+		ty = mktype(Tslice, 0, type(), nil);
 		return ty;
 	default : assert(0);
 	}

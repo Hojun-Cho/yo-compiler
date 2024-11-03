@@ -401,7 +401,7 @@ rewrite(Node *n)
 		if(r->l == nil)
 			r->l = mkconst(0);
 		if(r->r == nil)
-			r->r = mkconst(t->len);
+			r->r = mkconst(n->ty->len);
 		n->l = rewrite(n->l);
 		n->r = rewrite(n->r);
 		break;

@@ -247,7 +247,7 @@ genop(int op, Node *s, Node *m, Node *d)
 	};
 	Inst *in = mkinst();
 	int iop = disoptab[op][d->ty->kind];
-	assert(iop != nil);
+	assert(iop != 0);
 	in->op = iop;
 	if(s){
 		in->s = genaddr(s);

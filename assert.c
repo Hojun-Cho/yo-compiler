@@ -220,8 +220,8 @@ assertexpr(Node *n)
 	case Oindex:
 		t = l->ty;
 		if(t->kind == Tslice)
-			t = t->tof;
-		assert(t->kind == Tarray || t->kind == Tslice);
+			t = typeofslice(t->tof);
+		assert(t->kind == Tarray);
 		assertexpr(r);
 		if(r->op == Oconst)
 			assert(r->val < t->len);
