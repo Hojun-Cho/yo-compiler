@@ -42,6 +42,8 @@ enum NodeOp
 	Oname,
 	Ofor,
 	Oif,
+	Oandand,
+	Ooror,
 	Oret,
 	Oref,
 	Oxref,
@@ -135,7 +137,7 @@ enum LexToken
 {
 	Leof = -1,
 	Lnone = 0,
-	Lfn = sizeof(char)+1,
+	Lfn = 5000,
 	Llen,
 	Ltid,
 	Lid,
@@ -157,6 +159,8 @@ enum LexToken
 	Lneq,
 	Lleq,
 	Lgeq,
+	Landand,
+	Loror,
 };
 
 typedef struct Lexer Lexer;

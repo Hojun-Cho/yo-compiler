@@ -31,6 +31,7 @@ getfiles(char *path, char *sufix)
 	struct dirent *p;
 	char **s;
 
+	int ll = strlen(path);
 	int j = 1;
 	s = new(sizeof(char*));
 	d = opendir(path);
@@ -38,7 +39,11 @@ getfiles(char *path, char *sufix)
 		if(issufix(p->d_name, sufix)){
 			s = realloc(s, (j+1)*sizeof(void*));
 			int l = strlen(p->d_name);
-			s[j-1] = memcpy(new(l+1), p->d_name, l+1);
+			char *n = new(l+ll+2);
+			memcpy(n, path, ll);
+			n[ll] = '/';
+			memcpy(n+ll, p->d_name, l+1);
+			s[j-1] = n;
 			s[j++] = nil;
 		}
 	}

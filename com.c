@@ -612,14 +612,11 @@ ecom(Node *nto, Node *n)
 	case Ocall:
 		callcom(op, n, nto);
 		break;	
-	case Oeq:
-	case Oneq:
-	case Olt:
-	case Oleq:
-	case Ogt:
-	case Ogeq:
-		if(nto)
-			cmpcom(nto, n);		
+	case Oandand: case Ooror:
+	case Oeq: case Oneq:
+	case Olt: case Ogt:
+	case Ogeq: case Oleq: 
+		cmpcom(nto, n);		
 		break;
 	case Omul:
 	case Oadd:

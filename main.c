@@ -83,10 +83,13 @@ buildpkg(char *path, char **srcs, int n)
 int
 main(int argc, char **argv)
 {	
-	path = getpath();
+	if(argc == 2)
+		path = argv[1];
+	else
+		path = getpath();
 	char **srcs = getfiles(path, ".yo");
 	if(nsrc == 0)
-		return;
+		return 0;
 
 	lexinit();
 	typeinit();

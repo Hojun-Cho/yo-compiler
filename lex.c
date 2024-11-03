@@ -146,6 +146,16 @@ lexing(void)
 	case '(': case ')': case '[': case ']':
 	case '}': case '{': case ',': case ';':
 		return (Token){.kind=c};
+	case '|':
+		if((c = Getc()) == '|')
+			return (Token){.kind=Loror};
+		Ungetc(c);
+		return (Token){.kind='|'};
+	case '&':
+		if((c = Getc()) == '&')
+			return (Token){.kind=Landand};
+		Ungetc(c);
+		return (Token){.kind='&'};
 	case '!':
 		if((c = Getc()) == '=')
 			return (Token){.kind=Lneq};
@@ -173,7 +183,7 @@ lexing(void)
 			return (Token){.kind=Ldas};
 		Ungetc(c);
 		return (Token){.kind=':'};
-	case '+':case '-': case '*': case '&':
+	case '+':case '-': case '*':
 		return (Token){.kind=c};
 	default:
 		assert(0);

@@ -329,8 +329,7 @@ addop(void)
 	switch(c){
 	case '+': p = mkn(Oadd, p, mulop()); break;
 	case '-': p = mkn(Osub, p, mulop()); break;
-	default:
-		assert(0);
+	default: assert(0);
 	}
 	return p;
 }
@@ -356,9 +355,25 @@ relop(void)
 }
 
 static Node*
+logicop(void)
+{
+	int c, op;
+	Node *p = relop();
+	while((c = try((int[]){Loror,Landand,0}).kind)){
+		switch(c){
+		case Loror: op = Ooror; break;
+		case Landand: op = Oandand; break;
+		default: assert(0);
+		}
+		p = mkn(op, p, relop());
+	}
+	return p;
+}
+
+static Node*
 expr(void)
 {
-	return relop();
+	return logicop();
 }
 
 // exprlist = expr {',' expr }

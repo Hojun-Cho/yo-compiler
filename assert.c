@@ -124,6 +124,9 @@ assertexpr(Node *n)
 	case Oarray: 
 		n->ty = isvalidty(n->ty);
 		break;
+	case Ooror: case Oandand:
+		assert(l->ty == tbool);
+		assert(r->ty == tbool);
 	case Oeq: case Oneq: case Olt:
 	case Oleq: case Ogt: case Ogeq:
 		n->ty = tbool;

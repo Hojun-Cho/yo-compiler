@@ -239,12 +239,15 @@ genop(int op, Node *s, Node *m, Node *d)
 		[Olt] = {[Tint]=ILTW,[Tbool]=ILTW},
 		[Oeq] = {[Tint]=IEQW,[Tbool]=IEQW},
 		[Oleq] ={[Tint]=ILEQW,[Tbool]=ILEQW},
+		[Oandand] = {[Tint]=IEQW,[Tbool]=IEQW},
+		[Ooror] = {[Tint]=IADDW,[Tbool]=IADDW},
 		[Oadd] = {[Tint]=IADDW,},
 		[Osub] = {[Tint]=ISUBW,},
 		[Omul] = {[Tint]=IMULW,},
 	};
 	Inst *in = mkinst();
 	int iop = disoptab[op][d->ty->kind];
+	assert(iop != nil);
 	in->op = iop;
 	if(s){
 		in->s = genaddr(s);
