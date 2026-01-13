@@ -1,0 +1,10 @@
+package main
+
+import "./test/fib"
+import "./test/nqueen"
+
+fn main() int {
+	f := fib.fib(10);
+	n := nqueen.solve(8);
+	return f + n;
+};

@@ -828,7 +828,6 @@ imret(int n)
 		return tnone;
 	if(n == 1){
 		want((int[]){Lconst,0});
-		want((int[]){Lconst,0});
 		return imtype();
 	}
 	Type *res = mktype(Ttup, 0, nil, nil);

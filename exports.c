@@ -93,13 +93,15 @@ void
 genbin(char *name)
 {
 	f = fopen(name, "w+");
-	// fprintf(f, "%s\n", pkgname->name);
-	// fprintf(f, "%d\n", nimport);
-	// for(int i = 0; i < nimport; ++i){
-	// 	fprintf(f, "%d %s %s\n", i, imports[i].path->name, imports[i].sym->name);
-	// }
-
-	wr4(f, ninst);	
+	wr4(f, nimport);
+	for(int i = 0; i < nimport; ++i){
+		char buf[1024];
+		sprintf(buf, "%s/obj", imports[i].path->name);
+		int len = strlen(buf);
+		wr4(f, len);
+		fwrite(buf, 1, len, f);
+	}
+	wr4(f, ninst);
 	disinst(f, firstinst);
 	fclose(f);
 }

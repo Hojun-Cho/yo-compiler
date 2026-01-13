@@ -232,10 +232,10 @@ assertexpr(Node *n)
 	case Ocall:
 		assertexpr(r);
 		t = l->ty;
+		n->ty = t->tof;
 		if(l->op==Opkg)
 			return;
 		usetype(t);
-		n->ty = t->tof;
 		break;
 	default:
 		assert(0);

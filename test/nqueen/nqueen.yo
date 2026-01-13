@@ -1,27 +1,15 @@
-package main
+package nqueen
 
-type Any struct {
-	x,y int;
-	arr [8]int;
+export fn solve(n int) int {
+	arr := [16]int{};
+	return nqueen(0, 0, arr[:n]);
 };
 
-fn main() int {
-	arr := [8]int{};
-	return nqueen(0, 0, arr[:]);
-};
-
-fn fib(n int) int{
-	if n <= 1 {
-		return n;
-	};
-	return fib(n-1) + fib(n-2);
-};
-
-fn nqueen(r,ans int, arr []int) int{
+fn nqueen(r,ans int, arr []int) int {
 	if r == len(arr) {
 		return ans + 1;
 	};
-	for c:=0; c < len(arr); c=c+1{
+	for c:=0; c < len(arr); c=c+1 {
 		arr[r] = c;
 		if canput(r, arr) {
 			ans = nqueen(r+1, ans, arr);

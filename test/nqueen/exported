@@ -1,0 +1,7 @@
+nqueen
+fn .solve 296 0 1 1
+	0
+	int 1 8 56
+	8
+	int 1 8 0
+

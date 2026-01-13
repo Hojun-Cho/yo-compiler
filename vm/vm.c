@@ -5,6 +5,10 @@ u32 ninst;
 Inst *inst;
 REG R;
 
+Inst **modules;
+u32 *modsizes;
+int nmodules;
+
 #define OP(fn)	void fn(void)
 #define B(r)	*((i8*)(R.r))
 #define F(r)	((WORD*)(R.r))
@@ -112,6 +116,18 @@ OP(call){
 	R.FP = (u8*)f;
 	JMP(d);
 }
+OP(pcall){
+	Frame *f;
+	int mod, pc;
+
+	f = T(s);
+	f->lr = R.PC;
+	f->fp = R.FP;
+	R.FP = (u8*)f;
+	mod = W(m);
+	pc = W(d);
+	R.PC = &modules[mod][pc];
+}
 OP(ret) {
 	Frame *f = (Frame*)R.FP;
 	R.FP = f->fp;
@@ -165,6 +181,7 @@ static void (*optab[])(void) = {
 	[ILEA] = lea,
 	[IFRAME] = frame,
 	[ICALL] = call,
+	[PCALL] = pcall,
 	[IJMP] = jmp,
 	[IRET] = ret,
 	[ILEN] = len,
@@ -204,15 +221,15 @@ xec(void)
 }
 
 void
-bpatch(Inst *i)
+bpatch(Inst *i, Inst *base, u32 n)
 {
 	static int tab[IEND] = {
 		[ICALL]=1,[IBEQW]=1,[IBNEQW]=1,[IJMP]=1,
 	};
 	if(tab[i->op] == 0)
 		return;
-	assert(i->d.imm >= 0 && i->d.imm < ninst);	
-	i->d.imm = (WORD)&inst[i->d.imm];	
+	assert(i->d.imm >= 0 && i->d.imm < n);
+	i->d.imm = (WORD)&base[i->d.imm];
 	return;
 }
 
@@ -243,12 +260,11 @@ rdinst(FILE *f, Inst *in)
 	}
 	switch(UXDST(in->add)) {
 	case DST(AFP):
-	case DST(AMP):	
+	case DST(AMP):
 		in->d.ind = rd4(f);
 		break;
 	case DST(AIMM):
 		in->d.ind = rd4(f);
-		bpatch(in);
 		break;
 	case DST(AIND|AFP):
 	case DST(AIND|AMP):
@@ -258,18 +274,53 @@ rdinst(FILE *f, Inst *in)
 	}
 }
 
+Inst*
+loadmod(char *fname, u32 *outn)
+{
+	FILE *f = fopen(fname, "r");
+	assert(f != 0);
+	u32 nim = rd4(f);
+	for(u32 i = 0; i < nim; i++){
+		u32 len = rd4(f);
+		fseek(f, len, SEEK_CUR);
+	}
+	u32 n = rd4(f);
+	Inst *ins = calloc(sizeof(Inst), n);
+	for(u32 i = 0; i < n; i++)
+		rdinst(f, ins+i);
+	for(u32 i = 0; i < n; i++)
+		bpatch(ins+i, ins, n);
+	fclose(f);
+	*outn = n;
+	return ins;
+}
+
 void
 load(char *fname)
 {
 	FILE *f = fopen(fname, "r");
-	assert(f != 0);	
+	assert(f != 0);
 	initprog(1024);
+
+	nmodules = rd4(f);
+	if(nmodules > 0){
+		modules = calloc(sizeof(Inst*), nmodules);
+		modsizes = calloc(sizeof(u32), nmodules);
+		for(int i = 0; i < nmodules; i++){
+			u32 len = rd4(f);
+			char *path = calloc(1, len+1);
+			fread(path, 1, len, f);
+			modules[i] = loadmod(path, &modsizes[i]);
+			free(path);
+		}
+	}
+
 	ninst = rd4(f);
 	inst = calloc(sizeof(Inst), ninst);
-
-	for(u32 i = 0; i < ninst; ++i){
-		rdinst(f, inst+i);	
-	}
+	for(u32 i = 0; i < ninst; i++)
+		rdinst(f, inst+i);
+	for(u32 i = 0; i < ninst; i++)
+		bpatch(inst+i, inst, ninst);
 	R.PC = inst;
 	fclose(f);
 }
